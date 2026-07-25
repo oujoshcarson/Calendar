@@ -9,22 +9,26 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"></script>
 <style>
   :root{
-    --blueprint-deep: #10314f;
-    --blueprint-line: #5f93b8;
-    --blueprint-line-faint: rgba(143,191,222,0.22);
-    --paper: #f3ede0;
-    --amber: #e2a038;
-    --amber-deep: #c17f1f;
-    --busy-slate: #294a68;
-    --busy-slate-dark: #1a3550;
-    --closed-grey: #3a3a3a;
-    --closed-grey-dark: #2a2a2a;
-    --text-soft: #bcd3e4;
+    --paper: #f6f1e6;
+    --paper-deep: #ece4d3;
+    --ink: #16324f;
+    --ink-soft: #3f5b76;
+    --line-strong: rgba(22,50,79,0.32);
+    --line-mid: rgba(22,50,79,0.16);
+    --line-faint: rgba(22,50,79,0.08);
+    --busy-fill: #1c4a72;
+    --busy-fill-dark: #143955;
+    --busy-text: #f6f1e6;
+    --open-hatch: rgba(28,74,114,0.07);
+    --open-hatch-line: rgba(28,74,114,0.16);
+    --closed-fill: #d9d2c0;
+    --closed-text: #7a7360;
+    --accent: #1c4a72;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
-    background: radial-gradient(ellipse at top, #163b5c 0%, var(--blueprint-deep) 55%);
-    color: var(--paper);
+    background: var(--paper);
+    color: var(--ink);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
     padding: 40px 20px 80px;
@@ -32,20 +36,20 @@
   .sheet{
     max-width: 980px;
     margin: 0 auto;
-    border: 1.5px solid var(--blueprint-line);
+    border: 1.5px solid var(--line-strong);
     position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 200px);
+    background: var(--paper);
   }
   .sheet::before{
     content: "";
     position: absolute;
     inset: 10px;
-    border: 1px solid var(--blueprint-line-faint);
+    border: 1px solid var(--line-mid);
     pointer-events: none;
   }
   header{
     padding: 36px 40px 24px;
-    border-bottom: 1.5px solid var(--blueprint-line);
+    border-bottom: 1.5px solid var(--line-strong);
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -58,77 +62,75 @@
     font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--amber);
+    color: var(--accent);
     margin-bottom: 10px;
     display: flex; align-items: center; gap: 8px;
   }
   .live-dot{
     width: 7px; height: 7px; border-radius: 50%;
-    background: #56d17a; box-shadow: 0 0 0 3px rgba(86,209,122,0.2);
+    background: #2f9e5c; box-shadow: 0 0 0 3px rgba(47,158,92,0.18);
     display: inline-block;
   }
   h1{
     font-size: 34px;
     font-weight: 800;
     letter-spacing: -0.01em;
-    color: var(--paper);
+    color: var(--ink);
     line-height: 1.1;
   }
-  h1 span{color: var(--text-soft); font-weight: 500;}
+  h1 span{color: var(--ink-soft); font-weight: 500;}
   .subtitle{
     margin-top: 10px;
     font-size: 14.5px;
-    color: var(--text-soft);
+    color: var(--ink-soft);
     line-height: 1.5;
   }
   .stamp{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: var(--text-soft);
+    color: var(--ink-soft);
     text-align: right;
     line-height: 1.9;
-    border-left: 1px solid var(--blueprint-line-faint);
+    border-left: 1px solid var(--line-mid);
     padding-left: 20px;
   }
-  .stamp b{color: var(--paper); letter-spacing: 0.05em;}
+  .stamp b{color: var(--ink); letter-spacing: 0.05em;}
 
   .legend{
     display:flex; gap: 24px; padding: 18px 40px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11.5px;
-    color: var(--text-soft);
-    border-bottom: 1px solid var(--blueprint-line-faint);
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line-mid);
     flex-wrap: wrap;
     align-items: center;
   }
   .legend-item{display:flex; align-items:center; gap:8px;}
-  .swatch{width:14px; height:14px; border-radius:2px;}
-  .swatch.open{background: var(--amber); box-shadow: 0 0 0 1px var(--amber-deep) inset;}
-  .swatch.busy{
-    background: repeating-linear-gradient(135deg, var(--busy-slate), var(--busy-slate) 3px, var(--busy-slate-dark) 3px, var(--busy-slate-dark) 6px);
+  .swatch{width:16px; height:16px; border-radius:2px; border: 1px solid var(--line-strong);}
+  .swatch.open{
+    background: repeating-linear-gradient(135deg, var(--open-hatch), var(--open-hatch) 4px, transparent 4px, transparent 8px);
   }
-  .swatch.closed{
-    background: repeating-linear-gradient(135deg, var(--closed-grey), var(--closed-grey) 3px, var(--closed-grey-dark) 3px, var(--closed-grey-dark) 6px);
-    opacity: 0.85;
-  }
+  .swatch.busy{ background: var(--busy-fill); border-color: var(--busy-fill-dark); }
+  .swatch.closed{ background: var(--closed-fill); }
+
   .view-select-wrap{
     margin-left: auto;
     display: flex; align-items: center; gap: 10px;
   }
   .view-select-wrap label{
-    text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-soft);
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft);
   }
   #viewSelect{
-    background: var(--blueprint-deep);
-    color: var(--paper);
-    border: 1px solid var(--blueprint-line);
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
     border-radius: 4px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11.5px;
     padding: 7px 10px;
     cursor: pointer;
   }
-  #viewSelect:focus{ outline: 2px solid var(--amber); outline-offset: 2px; }
+  #viewSelect:focus{ outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .month-grid{
     display: grid;
@@ -141,54 +143,54 @@
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-soft);
+    color: var(--ink-soft);
     text-align: center;
     padding-bottom: 6px;
   }
   .month-cell{
-    border: 1px solid var(--blueprint-line-faint);
+    border: 1px solid var(--line-mid);
     border-radius: 5px;
     padding: 10px 10px 12px;
     min-height: 68px;
     position: relative;
+    background: var(--paper);
   }
   .month-cell .date{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
-    color: var(--paper);
+    color: var(--ink);
     font-weight: 600;
   }
   .month-cell .status{
     margin-top: 10px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9.5px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     display: inline-block;
     padding: 3px 7px;
     border-radius: 3px;
+    white-space: nowrap;
   }
-  .month-cell.mostly-open{ background: rgba(226,160,56,0.08); }
-  .month-cell.mostly-open .status{ background: var(--amber); color: #2a1c00; }
-  .month-cell.partial .status{
-    background: repeating-linear-gradient(135deg, var(--busy-slate), var(--busy-slate) 3px, var(--busy-slate-dark) 3px, var(--busy-slate-dark) 6px);
-    color: var(--paper);
+  .month-cell.status-open{ background: repeating-linear-gradient(135deg, var(--open-hatch), var(--open-hatch) 4px, transparent 4px, transparent 8px); }
+  .month-cell.status-open .status{ background: var(--paper); color: var(--accent); border: 1px solid var(--line-strong); }
+  .month-cell.status-am .status,
+  .month-cell.status-pm .status{
+    background: var(--paper-deep); color: var(--ink); border: 1px solid var(--line-mid);
   }
-  .month-cell.booked{ opacity: 0.7; }
-  .month-cell.booked .status{
-    background: repeating-linear-gradient(135deg, var(--closed-grey), var(--closed-grey) 3px, var(--closed-grey-dark) 3px, var(--closed-grey-dark) 6px);
-    color: var(--text-soft);
-  }
+  .month-cell.status-booked{ background: var(--busy-fill); border-color: var(--busy-fill-dark); }
+  .month-cell.status-booked .date{ color: var(--busy-text); }
+  .month-cell.status-booked .status{ background: var(--busy-fill-dark); color: var(--busy-text); }
   .month-cell.empty{ visibility: hidden; }
 
   .status-banner{
     margin: 20px 40px 0;
     padding: 12px 16px;
-    border: 1px dashed var(--amber);
+    border: 1px dashed var(--accent);
     border-radius: 4px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
-    color: var(--amber);
+    color: var(--accent);
     display: none;
   }
   .status-banner.show{ display: block; }
@@ -206,7 +208,7 @@
   .hour-label{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10.5px;
-    color: var(--text-soft);
+    color: var(--ink-soft);
     text-align: right;
     padding-right: 10px;
     transform: translateY(-7px);
@@ -214,7 +216,7 @@
   .day-col{
     display: grid;
     grid-template-rows: 34px repeat(11, 34px);
-    border-left: 1px solid var(--blueprint-line-faint);
+    border-left: 1px solid var(--line-mid);
     position: relative;
   }
   .day-head{
@@ -222,36 +224,51 @@
     font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--paper);
+    color: var(--ink);
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border-bottom: 1px solid var(--blueprint-line);
+    border-bottom: 1px solid var(--line-strong);
   }
   .day-head small{
-    display:block; font-weight:400; color: var(--text-soft); font-size: 10px; margin-top: 2px;
+    display:block; font-weight:400; color: var(--ink-soft); font-size: 10px; margin-top: 2px;
   }
-  .hour-row{ border-top: 1px solid var(--blueprint-line-faint); }
-  .day-col .hour-row:last-child{ border-bottom: 1px solid var(--blueprint-line-faint); }
+  .hour-row{ border-top: 1px solid var(--line-mid); }
+  .hour-row:nth-child(odd){ background: rgba(22,50,79,0.02); }
+  .day-col .hour-row:last-child{ border-bottom: 1px solid var(--line-strong); }
 
   .block{
     position: absolute;
     left: 4px; right: 4px;
     border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
   }
   .block.open{
-    background: var(--amber);
-    box-shadow: 0 0 0 1px var(--amber-deep) inset;
+    background: repeating-linear-gradient(135deg, var(--open-hatch), var(--open-hatch) 4px, transparent 4px, transparent 8px);
+    border: 1px solid var(--open-hatch-line);
   }
   .block.busy{
-    background: repeating-linear-gradient(135deg, var(--busy-slate), var(--busy-slate) 3px, var(--busy-slate-dark) 3px, var(--busy-slate-dark) 6px);
-    box-shadow: 0 0 0 1px rgba(143,191,222,0.25) inset;
+    background: var(--busy-fill);
+    border: 1px solid var(--busy-fill-dark);
+    box-shadow: 0 2px 5px rgba(20,57,85,0.18);
+  }
+  .block.busy .time-label{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--busy-text);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    padding: 2px 4px;
   }
   .block.closed{
-    background: repeating-linear-gradient(135deg, var(--closed-grey), var(--closed-grey) 3px, var(--closed-grey-dark) 3px, var(--closed-grey-dark) 6px);
-    opacity: 0.85;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset;
+    background: repeating-linear-gradient(135deg, var(--closed-fill), var(--closed-fill) 5px, var(--paper-deep) 5px, var(--paper-deep) 10px);
+    border: 1px solid var(--line-mid);
   }
 
   .cta-row{
@@ -261,21 +278,21 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 18px;
-    border-top: 1.5px solid var(--blueprint-line);
+    border-top: 1.5px solid var(--line-strong);
   }
   .cta-note{
     font-size: 13.5px;
-    color: var(--text-soft);
+    color: var(--ink-soft);
     max-width: 420px;
     line-height: 1.5;
   }
-  .cta-note b{color: var(--paper);}
+  .cta-note b{color: var(--ink);}
   .book-btn{
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: var(--amber);
-    color: #2a1c00;
+    background: var(--accent);
+    color: var(--paper);
     font-family: 'IBM Plex Mono', monospace;
     font-weight: 700;
     font-size: 13px;
@@ -284,26 +301,26 @@
     text-decoration: none;
     padding: 15px 26px;
     border-radius: 4px;
-    box-shadow: 0 0 0 1px var(--amber-deep) inset, 0 6px 18px rgba(226,160,56,0.25);
+    box-shadow: 0 6px 18px rgba(28,74,114,0.22);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
     white-space: nowrap;
   }
-  .book-btn:hover{ transform: translateY(-2px); box-shadow: 0 0 0 1px var(--amber-deep) inset, 0 10px 22px rgba(226,160,56,0.35); }
+  .book-btn:hover{ transform: translateY(-2px); box-shadow: 0 10px 22px rgba(28,74,114,0.3); }
   .book-btn svg{width:16px; height:16px;}
 
   footer{
     text-align:center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10.5px;
-    color: var(--blueprint-line);
+    color: var(--ink-soft);
     letter-spacing: 0.08em;
     margin-top: 22px;
   }
 
   @media (max-width: 640px){
     header{padding: 28px 22px 20px;}
-    .stamp{text-align:left; border-left:none; padding-left:0; border-top:1px solid var(--blueprint-line-faint); padding-top:12px;}
-    .grid-wrap, .cta-row, .status-banner{margin-left:22px; margin-right:22px; padding-left:22px; padding-right:22px;}
+    .stamp{text-align:left; border-left:none; padding-left:0; border-top:1px solid var(--line-mid); padding-top:12px;}
+    .grid-wrap, .cta-row{padding-left:22px; padding-right:22px;}
     h1{font-size: 26px;}
   }
   @media (prefers-reduced-motion: reduce){
@@ -318,7 +335,7 @@
     <div class="title-block">
       <div class="eyebrow"><span class="live-dot"></span>Live Availability</div>
       <h1>Josh Carson<span> — Open Hours</span></h1>
-      <p class="subtitle">Weekdays, 7:00 AM – 6:00 PM Central. Amber is open — pick anything and grab it below. Use the view selector to jump to next week or the full month.</p>
+      <p class="subtitle">Weekdays, 7:00 AM – 6:00 PM Central. Hatched blocks are open — pick anything and grab it below. Use the view selector to jump to next week or the full month.</p>
     </div>
     <div class="stamp">
       <div>WEEK: <b id="weekLabel">—</b></div>
@@ -356,25 +373,11 @@
   </div>
 </div>
 
-<footer>LIVE FEED · SCALE: 11 HR / DAY · REV B</footer>
+<footer>LIVE FEED · SCALE: 11 HR / DAY · REV C</footer>
 
 <script>
 /* ============================================================
-   CONFIG — CALENDAR_ID is already set to joshualcarson@gmail.com.
-   One thing left: add your GOOGLE_API_KEY, and make free/busy public.
-
-   1) GOOGLE_API_KEY
-      - Go to console.cloud.google.com → APIs & Services → Credentials
-      - Create Credentials → API key
-      - Restrict it: Application restrictions → HTTP referrers →
-        add the domain where this page will live (e.g. yourdomain.com/*)
-      - Restrict it further: API restrictions → limit to "Google Calendar API"
-
-   2) Calendar sharing (required or the API call will fail)
-      - In Google Calendar, go to Settings for joshualcarson@gmail.com
-      - Under "Access permissions," check "Make available to public"
-        and choose "See only free/busy (hide details)" — this means
-        no titles, locations, or guests are ever exposed, only blocked time
+   CONFIG
    ============================================================ */
   const GOOGLE_API_KEY = "AIzaSyDejYTqUj5P5O58zeMYdQ_vgTlJMWC1PZc";
   const CALENDAR_ID = "joshualcarson@gmail.com";
@@ -386,7 +389,6 @@
   const DAY_START_HOUR = 7;
   const DAY_END_HOUR = 18;      // grid runs 7am - 6pm
   const CLOSE_AFTER_HOUR = 17;  // 5pm - anything past this is "outside hours"
-  const HOURS = DAY_END_HOUR - DAY_START_HOUR; // 11
 
   const statusBanner = document.getElementById('statusBanner');
   function showStatus(msg){
@@ -395,7 +397,6 @@
   }
 
   function getCalendarWeekdays(weekOffset){
-    // Monday-Friday of the current week (weekOffset 0) or a future week
     const monday = DateTime.now().setZone(ZONE).startOf('day').set({weekday: 1}).plus({weeks: weekOffset});
     return [0,1,2,3,4].map(i => monday.plus({days: i}));
   }
@@ -475,6 +476,13 @@
     return free;
   }
 
+  function fmtHour(h){
+    const hr12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const mins = Math.round((h % 1) * 60);
+    return mins === 0 ? `${hr12}${ampm}` : `${hr12}:${String(mins).padStart(2,'0')}${ampm}`;
+  }
+
   function render(dayModel){
     document.getElementById('weekLabel').textContent =
       `${dayModel[0].date.toFormat('LLL d')} – ${dayModel[dayModel.length-1].date.toFormat('LLL d')}`;
@@ -490,9 +498,7 @@
     for(let h = DAY_START_HOUR; h < DAY_END_HOUR; h++){
       const lab = document.createElement('div');
       lab.className = 'hour-label';
-      const hr12 = h > 12 ? h - 12 : h;
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      lab.textContent = `${hr12}${ampm}`;
+      lab.textContent = fmtHour(h);
       hourCol.appendChild(lab);
     }
     root.appendChild(hourCol);
@@ -514,28 +520,48 @@
         col.appendChild(row);
       }
 
-      const addBlock = (s, e, type) => {
+      const addBlock = (s, e, type, label) => {
         const block = document.createElement('div');
         block.className = `block ${type}`;
         block.style.top = (headHeight + (s - DAY_START_HOUR) * rowHeight + 2) + 'px';
         block.style.height = ((e - s) * rowHeight - 4) + 'px';
+        if(label) block.innerHTML = `<span class="time-label">${label}</span>`;
         col.appendChild(block);
       };
 
-      // busy + open within bookable window (7am - 5pm)
       const bookableBusy = day.busy
         .map(([s,e]) => [Math.min(s, CLOSE_AFTER_HOUR), Math.min(e, CLOSE_AFTER_HOUR)])
         .filter(([s,e]) => e > s);
-      bookableBusy.forEach(([s,e]) => addBlock(s, e, 'busy'));
+      bookableBusy.forEach(([s,e]) => addBlock(s, e, 'busy', `${fmtHour(s)}–${fmtHour(e)}`));
 
       const freeRanges = invert(bookableBusy, DAY_START_HOUR, CLOSE_AFTER_HOUR);
       freeRanges.forEach(([s,e]) => { if(e - s >= 0.4) addBlock(s, e, 'open'); });
 
-      // outside-hours band, 5pm - 6pm, always closed styling
       addBlock(CLOSE_AFTER_HOUR, DAY_END_HOUR, 'closed');
 
       root.appendChild(col);
     });
+  }
+
+  function classifyDay(day){
+    const AM_START = DAY_START_HOUR, AM_END = 12;
+    const PM_START = 12, PM_END = CLOSE_AFTER_HOUR;
+
+    const busyIn = (start, end) => day.busy.reduce((sum,[s,e]) => {
+      const cs = Math.max(s, start), ce = Math.min(e, end);
+      return ce > cs ? sum + (ce - cs) : sum;
+    }, 0);
+
+    const amBusy = busyIn(AM_START, AM_END) / (AM_END - AM_START);
+    const pmBusy = busyIn(PM_START, PM_END) / (PM_END - PM_START);
+
+    const amFree = amBusy < 0.3;
+    const pmFree = pmBusy < 0.3;
+
+    if(amFree && pmFree) return { cls: 'status-open', label: 'Open' };
+    if(amFree && !pmFree) return { cls: 'status-am', label: 'AM Available' };
+    if(!amFree && pmFree) return { cls: 'status-pm', label: 'PM Available' };
+    return { cls: 'status-booked', label: 'Booked' };
   }
 
   function renderMonth(dayModel){
@@ -555,8 +581,7 @@
       root.appendChild(h);
     });
 
-    // leading blanks so the first real day lands under its weekday column
-    const firstWeekday = dayModel[0].date.weekday; // 1=Mon..5=Fri
+    const firstWeekday = dayModel[0].date.weekday;
     for(let i = 1; i < firstWeekday; i++){
       const blank = document.createElement('div');
       blank.className = 'month-cell empty';
@@ -564,21 +589,10 @@
     }
 
     dayModel.forEach(day => {
-      const bookableBusy = day.busy
-        .map(([s,e]) => [Math.min(s, CLOSE_AFTER_HOUR), Math.min(e, CLOSE_AFTER_HOUR)])
-        .filter(([s,e]) => e > s);
-      const busyHours = bookableBusy.reduce((sum,[s,e]) => sum + (e - s), 0);
-      const totalHours = CLOSE_AFTER_HOUR - DAY_START_HOUR;
-      const ratio = totalHours > 0 ? busyHours / totalHours : 0;
-
-      let statusClass, statusLabel;
-      if(ratio < 0.2){ statusClass = 'mostly-open'; statusLabel = 'Open'; }
-      else if(ratio < 0.7){ statusClass = 'partial'; statusLabel = 'Partial'; }
-      else { statusClass = 'booked'; statusLabel = 'Booked'; }
-
+      const { cls, label } = classifyDay(day);
       const cell = document.createElement('div');
-      cell.className = `month-cell ${statusClass}`;
-      cell.innerHTML = `<div class="date">${day.date.toFormat('d')}</div><div class="status">${statusLabel}</div>`;
+      cell.className = `month-cell ${cls}`;
+      cell.innerHTML = `<div class="date">${day.date.toFormat('d')}</div><div class="status">${label}</div>`;
       root.appendChild(cell);
     });
   }
